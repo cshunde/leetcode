@@ -9,9 +9,8 @@
  */
 class BSTIterator {
 public:
-    BSTIterator(TreeNode *root): curr(nullptr) {
-        curr = mostSmallestElem(root);
-        buildTraverseStack(root);
+    BSTIterator(TreeNode *root) {
+        curr = buildTraverseStack(root);
     }
 
     /** @return whether we have a next smallest number */
@@ -33,32 +32,23 @@ public:
        return value;
     }
 private:
-    TreeNode* mostSmallestElem(TreeNode *root) {
+    // buildTraverseStack track traverse path
+    // return pointer of smallest TreeNode
+    TreeNode* buildTraverseStack(TreeNode *root) {
         if (root == nullptr) {
             return nullptr;
         }
-        if (root->left == nullptr) {
-            return root;
-        }     
-        return mostSmallestElem(root->left);
-    }
+        TreeNode* smallest = root;
 
-    void buildTraverseStack(TreeNode *root) {
-        if (root == nullptr) {
-            return;
-        }
-
-        buildTraverseStack(root->right);
-
-        TreeNode* rightMostSmallestElem = mostSmallestElem(root->right);
+        TreeNode* rightMostSmallestElem = buildTraverseStack(root->right);
         if (rightMostSmallestElem != nullptr && rightMostSmallestElem != root->right) {
             nextElems.push(rightMostSmallestElem);
         }
         if (root->left != nullptr) {
             nextElems.push(root);
+            smallest = buildTraverseStack(root->left);
         }
-
-        buildTraverseStack(root->left);
+        return smallest;
     }
 private:
     TreeNode* curr;
