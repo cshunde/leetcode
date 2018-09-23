@@ -3,6 +3,18 @@
 using namespace std;
 
 class Solution {
+private:
+    void enQueue(deque<int> &sw, int n) {
+        while (!sw.empty() && sw.back() < n) {
+            sw.pop_back();
+        }
+        sw.push_back(n);
+    }
+    void deQueue(deque<int> &sw, int n) {
+        if (sw.front() == n) {
+            sw.pop_front();
+        }
+    }
 public:
     vector<int> maxSlidingWindow(vector<int>& nums, int k) {
         if (k == 1) {
@@ -15,24 +27,15 @@ public:
         result.reserve(nums.size() - k + 1);
 
         deque<int> sw;
-        for (int i = 0; i < k; i++) {
-            while (sw.size() > 0 && sw.back() < nums[i]) {
-                sw.pop_back();
-            }
-            sw.push_back(nums[i]);
+        for (int i = 0; i < k - 1; i++) {
+            enQueue(sw, nums[i]);
         }
 
-        for (int i = 0; i < nums.size() - k; i++) {
+        for (int i = k - 1; i < nums.size(); i++) {
+            enQueue(sw, nums[i]);
             result.push_back(sw.front());
-            if (nums[i] == sw.front()) {
-                sw.pop_front();
-            }
-            while (sw.size() > 0 && sw.back() < nums[i+k]) {
-                sw.pop_back();
-            }
-            sw.push_back(nums[i+k]);
+            deQueue(sw, nums[i-k+1]);
         }
-        result.push_back(sw.front());
         return result;
     }
 };
